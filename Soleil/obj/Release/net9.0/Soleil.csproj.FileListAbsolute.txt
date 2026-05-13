@@ -161,3 +161,4 @@ C:\Users\33665\source\repos\Soleil\Soleil\obj\Release\net9.0\refint\Soleil.dll
 C:\Users\33665\source\repos\Soleil\Soleil\obj\Release\net9.0\Soleil.pdb
 C:\Users\33665\source\repos\Soleil\Soleil\obj\Release\net9.0\Soleil.genruntimeconfig.cache
 C:\Users\33665\source\repos\Soleil\Soleil\obj\Release\net9.0\ref\Soleil.dll
+C:\Users\33665\source\repos\Soleil\Soleil\obj\Release\net9.0\Soleil.sourcelink.json

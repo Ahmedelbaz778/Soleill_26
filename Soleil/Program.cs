@@ -20,7 +20,11 @@ namespace Soleil
 
             // 1. الـ DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Elbaz")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Elbaz"),
+                    sqlOptions => sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null)));
 
             // 2. الـ Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
@@ -126,7 +130,7 @@ namespace Soleil
                 }
             }
 
-            // 9. ✅ Error Handler عشان نشوف المشكلة
+            // 9. Error Handler
             app.UseExceptionHandler(errorApp =>
             {
                 errorApp.Run(async context =>
