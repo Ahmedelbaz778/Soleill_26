@@ -1,0 +1,262 @@
+[
+  {
+    "ContainingType": "Soleil.Controllers.AccountController",
+    "Method": "Login",
+    "RelativePath": "api/Account/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Soleil.Models.DTOs.Account.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.AccountController",
+    "Method": "RegisterDoctor",
+    "RelativePath": "api/Account/register-doctor",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "FirstName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LastName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Education",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ExperienceYears",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "NationalId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "City",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Street",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Building",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ClinicPhone",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "WorkingHours",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CertificateImage",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.AccountController",
+    "Method": "RegisterParent",
+    "RelativePath": "api/Account/register-parent",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Soleil.Models.DTOs.Account.RegisterParentDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.AssessmentController",
+    "Method": "GetFields",
+    "RelativePath": "api/Assessment/get-all-fields",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.AssessmentController",
+    "Method": "GetAllQuestions",
+    "RelativePath": "api/Assessment/get-all-questions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.AssessmentController",
+    "Method": "GetQuestionsByField",
+    "RelativePath": "api/Assessment/get-questions-by-field/{fieldId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fieldId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.AssessmentController",
+    "Method": "Submit",
+    "RelativePath": "api/Assessment/submit-questionnaire",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Soleil.Models.DTOs.Assessment.SubmitQuestionnaireDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.ChildController",
+    "Method": "GetChild",
+    "RelativePath": "api/Child/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.ChildController",
+    "Method": "AddChild",
+    "RelativePath": "api/Child/add",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Soleil.Models.DTOs.Child.AddChildDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.ChildController",
+    "Method": "GetMyChildren",
+    "RelativePath": "api/Child/my-children",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.DoctorController",
+    "Method": "GetDoctor",
+    "RelativePath": "api/Doctor/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.DoctorController",
+    "Method": "GetAllDoctors",
+    "RelativePath": "api/Doctor/list",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.EyeScanController",
+    "Method": "Analyze",
+    "RelativePath": "api/EyeScan/analyze",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Soleil.Models.DTO.Scan.EyeScan.EyeScanRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Soleil.Controllers.ProgressController",
+    "Method": "GetLatestReport",
+    "RelativePath": "api/Progress/child/{childId}/latest-report",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "childId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
