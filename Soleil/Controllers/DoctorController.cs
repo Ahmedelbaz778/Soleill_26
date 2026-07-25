@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Soleil.Infrastructure.Interfaces;
 using Soleil.Models.DTOs.Doctor;
 
@@ -66,10 +67,26 @@ public class DoctorController : ControllerBase
             City = doctor.City,
             ClinicPhone = doctor.ClinicPhone,
             WorkingHours = doctor.WorkingHours,
-            ProfileImage = doctor.ProfileImage,        
-            CertificateImage = doctor.CertificateImage 
+            ProfileImage = doctor.ProfileImage,
+            CertificateImage = doctor.CertificateImage
         };
 
         return Ok(result);
+    }
+    [HttpPut("update-profile")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile([FromForm] UpdateDoctorDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId == null)
+            return Unauthorized(new { Message = "غير مصرح" });
+
+        var result = await _doctorRepo.UpdateDoctorAsync(userId, dto);
+
+        if (!result)
+            return NotFound(new { Message = "الطبيب غير موجود" });
+
+        return Ok(new { Message = "تم تحديث البيانات بنجاح" });
     }
 }

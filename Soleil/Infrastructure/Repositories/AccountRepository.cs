@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Soleil.Infrastructure.Interfaces;
@@ -6,9 +10,6 @@ using Soleil.Models.Data;
 using Soleil.Models.DTOs.Account;
 using Soleil.Models.Entities;
 using Soleil.Services; // ✅ ضفنا الـ using ده عشان يشوف الـ EmailService
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Soleil.Infrastructure.Repositories;
 
@@ -66,6 +67,45 @@ public class AccountRepository : IAccountRepository
     {
         var roles = await _userManager.GetRolesAsync(user);
         return roles.FirstOrDefault();
+    }
+    public async Task<bool> UpdateParentAsync(string userId, UpdateParentDto dto)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return false;
+
+        var parent = await _context.Parents
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+        if (parent == null) return false;
+
+        // تحديث بيانات الـ User
+        if (dto.FirstName != null) user.FirstName = dto.FirstName;
+        if (dto.LastName != null) user.LastName = dto.LastName;
+        if (dto.PhoneNumber != null) user.PhoneNumber = dto.PhoneNumber;
+
+        await _userManager.UpdateAsync(user);
+
+        // تحديث بيانات الـ Parent
+        if (dto.Relation != null) parent.Relation = dto.Relation;
+
+        // تحديث الصورة لو موجودة
+        if (dto.ProfileImage != null)
+        {
+            var profileFolder = Path.Combine("wwwroot", "parents");
+            if (!Directory.Exists(profileFolder))
+                Directory.CreateDirectory(profileFolder);
+
+            var profileImageName = Guid.NewGuid() +
+                Path.GetExtension(dto.ProfileImage.FileName);
+            var profilePath = Path.Combine(profileFolder, profileImageName);
+
+            using var stream = new FileStream(profilePath, FileMode.Create);
+            await dto.ProfileImage.CopyToAsync(stream);
+
+            parent.ProfileImage = profileImageName;
+        }
+
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public string GenerateJwtToken(ApplicationUser user)

@@ -107,6 +107,7 @@ namespace Soleil
             builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
             builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
             builder.Services.AddScoped<IEyeScanRepository, EyeScanRepository>();
+            builder.Services.AddScoped<IGameRepository, GameRepository>();
             builder.Services.AddTransient<Soleil.Services.IEmailService, Soleil.Services.EmailService>();
             builder.Services.AddHttpClient();
 

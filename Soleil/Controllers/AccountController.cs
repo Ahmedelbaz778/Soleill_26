@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Soleil.Models.Entities;
-using Soleil.Models.DTOs.Account;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Soleil.Infrastructure.Interfaces;
+using Soleil.Models.DTOs.Account;
+using Soleil.Models.Entities;
 
 namespace Soleil.Controllers;
 
@@ -62,6 +64,22 @@ public class AccountController : ControllerBase
         await _accountRepo.SaveChangesAsync();
 
         return Ok(new { Message = "تم تسجيل ولي الأمر بنجاح" });
+    }
+    [HttpPut("update-parent")]
+    [Authorize]
+    public async Task<IActionResult> UpdateParent([FromForm] UpdateParentDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId == null)
+            return Unauthorized(new { Message = "غير مصرح" });
+
+        var result = await _accountRepo.UpdateParentAsync(userId, dto);
+
+        if (!result)
+            return NotFound(new { Message = "ولي الأمر غير موجود" });
+
+        return Ok(new { Message = "تم تحديث البيانات بنجاح" });
     }
 
     [HttpPost("register-doctor")]

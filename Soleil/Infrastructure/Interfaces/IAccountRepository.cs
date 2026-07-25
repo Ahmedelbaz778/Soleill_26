@@ -8,6 +8,8 @@ public interface IAccountRepository
 {
     Task<IdentityResult> CreateUserAsync(ApplicationUser user, string password);
     Task AddParentAsync(Parent parent);
+    
+    Task<bool> UpdateParentAsync(string userId, UpdateParentDto dto);
     Task AddDoctorAsync(Doctor doctor);
     Task AssignRoleAsync(ApplicationUser user, string role);
     Task<string?> GetUserRoleAsync(ApplicationUser user);
