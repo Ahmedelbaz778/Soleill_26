@@ -24,7 +24,7 @@ public class EyeScanController : ControllerBase
     [HttpPost("analyze")]
     public async Task<IActionResult> Analyze([FromBody] EyeScanRequestDto dto)
     {
-        // 1. تأكد إن الطفل بتاعه
+        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var parent = await _context.Parents
@@ -39,7 +39,7 @@ public class EyeScanController : ControllerBase
         if (child == null)
             return Forbid();
 
-        // 2. كلم الـ Repository
+        
         try
         {
             var result = await _eyeScanRepo.AnalyzeAsync(dto);

@@ -10,10 +10,9 @@ public class EyeScanRequestDto
 
 public class ScanPointDto
 {
-    public int Idx { get; set; }
     public double X { get; set; }
     public double Y { get; set; }
-    public double Duration { get; set; }
+    public double DurationMs { get; set; }
 }
 
 // Output للـ Flutter

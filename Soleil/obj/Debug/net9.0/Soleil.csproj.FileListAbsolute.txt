@@ -162,3 +162,8 @@ C:\Users\33665\source\repos\Soleil\Soleil\obj\Debug\net9.0\Soleil.pdb
 C:\Users\33665\source\repos\Soleil\Soleil\obj\Debug\net9.0\Soleil.genruntimeconfig.cache
 C:\Users\33665\source\repos\Soleil\Soleil\obj\Debug\net9.0\ref\Soleil.dll
 C:\Users\33665\source\repos\Soleil\Soleil\obj\Debug\net9.0\Soleil.sourcelink.json
+C:\Users\33665\source\repos\Soleil\Soleil\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\33665\source\repos\Soleil\Soleil\bin\Debug\net9.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\33665\source\repos\Soleil\Soleil\bin\Debug\net9.0\Microsoft.Extensions.Options.dll
+C:\Users\33665\source\repos\Soleil\Soleil\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
+C:\Users\33665\source\repos\Soleil\Soleil\bin\Debug\net9.0\System.Diagnostics.DiagnosticSource.dll

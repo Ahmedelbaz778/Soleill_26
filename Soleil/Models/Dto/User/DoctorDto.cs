@@ -9,5 +9,7 @@ public class DoctorDto
     public string City { get; set; } = string.Empty;
     public string? ClinicPhone { get; set; }
     public string? WorkingHours { get; set; }
-    public string? ProfileImage { get; set; }
+    public string? ProfileImage { get; set; }     // ✅ صورة البروفايل
+    public string? CertificateImage { get; set; } // ✅ صورة الشهادة
+
 }

@@ -39,4 +39,5 @@ public class RegisterDoctorDto
 
     // لاستلام ملف الصورة الفعلي من الموبايل
     public IFormFile? CertificateImage { get; set; }
+    public IFormFile? ProfileImage { get; set; }
 }

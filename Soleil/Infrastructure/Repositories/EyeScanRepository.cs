@@ -1,9 +1,9 @@
-﻿using System.Text;
+﻿using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Soleil.Infrastructure.Interfaces;
 using Soleil.Models.Data;
-using Soleil.Models.DTO.Scan.EyeScan;
 using Soleil.Models.DTO.Scan.EyeScan;
 using Soleil.Models.Entities;
 
@@ -13,6 +13,14 @@ public class EyeScanRepository : IEyeScanRepository
 {
     private readonly ApplicationDbContext _context;
     private readonly HttpClient _httpClient;
+    private const string AiApiUrl = "https://ayat33-asd-screening-api.hf.space/predict";
+
+    // استخدام JsonSerializerOptions ثابتة كـ static لمنع إعادة توليدها مع كل Request تحسيناً للأداء
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        PropertyNameCaseInsensitive = true
+    };
 
     public EyeScanRepository(ApplicationDbContext context, IHttpClientFactory httpClientFactory)
     {
@@ -22,34 +30,35 @@ public class EyeScanRepository : IEyeScanRepository
 
     public async Task<EyeScanResultDto> AnalyzeAsync(EyeScanRequestDto dto)
     {
-        // 1. تحويل الإحداثيات → CSV
-        var csvContent = ConvertToCsv(dto.ScanPath);
-        var csvBytes = Encoding.UTF8.GetBytes(csvContent);
-
-        // 2. بعت CSV للـ AI Model
-        using var formData = new MultipartFormDataContent();
-        var fileContent = new ByteArrayContent(csvBytes);
-        fileContent.Headers.ContentType =
-            new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv");
-        formData.Add(fileContent, "file", "scanpath.csv");
-
-        var aiUrl = $"https://elamit1911-asd-api.hf.space/predict?child_id={dto.ChildId}&notes={dto.Notes ?? "none"}";
-        var response = await _httpClient.PostAsync(aiUrl, formData);
-
-        if (!response.IsSuccessStatusCode)
-            throw new Exception("فشل في الاتصال بالـ AI Model");
-
-        // 3. قراءة النتيجة
-        var jsonResponse = await response.Content.ReadAsStringAsync();
-        var aiResult = JsonSerializer.Deserialize<AiResponseDto>(jsonResponse, new JsonSerializerOptions
+        // 1. تجهيز الـ Request Body المطابق للـ Swagger الجديد {"points": [...]}
+        var requestPayload = new
         {
-            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-        });
+            points = dto.ScanPath.Select(p => new
+            {
+                x = p.X,
+                y = p.Y,
+                duration_ms = p.DurationMs // التعديل الجديد للأتربيوت
+            }).ToList()
+        };
+
+        // 2. إرسال الـ JSON مباشرة باستخدام PostAsJsonAsync (أسرع وأوفر في الذاكرة)
+        var response = await _httpClient.PostAsJsonAsync(AiApiUrl, requestPayload);
+
+        // 3. معالجة الأخطاء بشكل احترافي
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException($"AI Server Error: {response.StatusCode} - {errorContent}");
+        }
+
+        // 4. قراءة الـ Stream مباشرة وعمل Deserialize (أداء أفضل بكتير من قراءته كـ string أولاً)
+        using var responseStream = await response.Content.ReadAsStreamAsync();
+        var aiResult = await JsonSerializer.DeserializeAsync<AiResponseDto>(responseStream, JsonOptions);
 
         if (aiResult == null)
-            throw new Exception("فشل في قراءة نتيجة الـ AI");
+            throw new InvalidOperationException("فشل في قراءة وتفسير نتيجة الـ AI المستلمة.");
 
-        // 4. حفظ النتيجة في DB
+        // 5. حفظ النتيجة في قاعدة البيانات
         var eyeScan = new EyeScanTest
         {
             ChildId = dto.ChildId,
@@ -66,7 +75,7 @@ public class EyeScanRepository : IEyeScanRepository
         await _context.EyeScanTests.AddAsync(eyeScan);
         await _context.SaveChangesAsync();
 
-        // 5. رجوع النتيجة
+        // 6. إرجاع الـ DTO النهائي للـ Flutter
         return new EyeScanResultDto
         {
             AsdProbability = aiResult.AsdProbability,
@@ -79,25 +88,13 @@ public class EyeScanRepository : IEyeScanRepository
         };
     }
 
-    // تحويل الإحداثيات لـ CSV
-    private string ConvertToCsv(List<ScanPointDto> scanPath)
+    private static string GetDecision(double percentage)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("idx,x,y,duration");
-        foreach (var point in scanPath)
+        return percentage switch
         {
-            sb.AppendLine($"{point.Idx},{point.X},{point.Y},{point.Duration}");
-        }
-        return sb.ToString();
-    }
-
-    // القرار بناءً على الـ BRD
-    private string GetDecision(double percentage)
-    {
-        if (percentage < 30)
-            return "لا توجد مؤشرات مقلقة";
-        if (percentage <= 80)
-            return "يحتاج استبيان";
-        return "يرجى مراجعة طبيب مختص";
+            < 30 => "لا توجد مؤشرات مقلقة",
+            <= 80 => "يحتاج استبيان",
+            _ => "يرجى مراجعة طبيب مختص"
+        };
     }
 }

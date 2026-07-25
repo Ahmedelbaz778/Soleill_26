@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Soleil")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a35cd34ab890172fbe588173f5a30931a9b89947")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3e9d1137ae83426e5f8d277ca9070c555096a69e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Soleil")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Soleil")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

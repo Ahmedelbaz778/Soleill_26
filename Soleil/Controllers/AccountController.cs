@@ -16,7 +16,6 @@ public class AccountController : ControllerBase
         _accountRepo = accountRepo;
     }
 
-    // 1. تسجيل الدخول
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto dto)
     {
@@ -25,8 +24,6 @@ public class AccountController : ControllerBase
             return Unauthorized(new { Message = "البريد الإلكتروني أو كلمة المرور غير صحيحة" });
 
         var token = _accountRepo.GenerateJwtToken(user);
-
-        // ✅ رجّع الـ Role عشان الموبايل يعرف هو Parent ولا Doctor
         var role = await _accountRepo.GetUserRoleAsync(user);
 
         return Ok(new
@@ -38,7 +35,6 @@ public class AccountController : ControllerBase
         });
     }
 
-    // 2. تسجيل ولي الأمر
     [HttpPost("register-parent")]
     public async Task<IActionResult> RegisterParent(RegisterParentDto dto)
     {
@@ -54,7 +50,6 @@ public class AccountController : ControllerBase
         if (!result.Succeeded)
             return BadRequest(result.Errors);
 
-        // ✅ تعيين الـ Role
         await _accountRepo.AssignRoleAsync(user, "Parent");
 
         var parent = new Parent
@@ -69,7 +64,6 @@ public class AccountController : ControllerBase
         return Ok(new { Message = "تم تسجيل ولي الأمر بنجاح" });
     }
 
-    // 3. تسجيل الطبيب
     [HttpPost("register-doctor")]
     public async Task<IActionResult> RegisterDoctor([FromForm] RegisterDoctorDto dto)
     {
@@ -85,12 +79,10 @@ public class AccountController : ControllerBase
         if (!result.Succeeded)
             return BadRequest(result.Errors);
 
-        // ✅ تعيين الـ Role
         await _accountRepo.AssignRoleAsync(user, "Doctor");
 
-        // ✅ حفظ الصورة الفعلية
+        // ✅ Certificate Image
         string fileName = "default-cert.jpg";
-
         if (dto.CertificateImage != null)
         {
             var folderPath = Path.Combine("wwwroot", "certificates");
@@ -104,6 +96,20 @@ public class AccountController : ControllerBase
             await dto.CertificateImage.CopyToAsync(stream);
         }
 
+        string profileImageName = "default-profile.jpg";
+        if (dto.ProfileImage != null)
+        {
+            var profileFolder = Path.Combine("wwwroot", "profiles");
+            if (!Directory.Exists(profileFolder))
+                Directory.CreateDirectory(profileFolder);
+
+            profileImageName = Guid.NewGuid() + Path.GetExtension(dto.ProfileImage.FileName);
+            var profilePath = Path.Combine(profileFolder, profileImageName);
+
+            using var stream = new FileStream(profilePath, FileMode.Create);
+            await dto.ProfileImage.CopyToAsync(stream);
+        }
+
         var doctor = new Doctor
         {
             UserId = user.Id,
@@ -115,7 +121,8 @@ public class AccountController : ControllerBase
             Building = dto.Building,
             ClinicPhone = dto.ClinicPhone,
             WorkingHours = dto.WorkingHours,
-            CertificateImage = fileName, 
+            CertificateImage = fileName,
+            ProfileImage = profileImageName,
             IsVerified = false
         };
 
@@ -123,5 +130,26 @@ public class AccountController : ControllerBase
         await _accountRepo.SaveChangesAsync();
 
         return Ok(new { Message = "تم تسجيل طلب الطبيب بنجاح" });
+    }
+
+    // 🆕 الـ Endpoint الجديد الخاص بنسيان كلمة المرور
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _accountRepo.ForgotPasswordAsync(dto.Email);
+
+        if (result == "NotFound")
+            return BadRequest(new { Message = "هذا البريد الإلكتروني غير مسجل لدينا!" });
+
+        if (result == "Error")
+            return BadRequest(new { Message = "حدث خطأ أثناء إعادة تعيين كلمة المرور." });
+
+        if (result == "EmailFailed")
+            return BadRequest(new { Message = "تم تغيير الباسوورد في قاعدة البيانات ولكن فشل إرسال الإيميل." });
+
+        return Ok(new { Message = "تم إرسال كلمة المرور الجديدة إلى بريدك الإلكتروني بنجاح." });
     }
 }

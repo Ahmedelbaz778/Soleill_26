@@ -20,11 +20,7 @@ namespace Soleil
 
             // 1. الـ DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Elbaz"),
-                    sqlOptions => sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null)));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Elbaz")));
 
             // 2. الـ Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
@@ -111,6 +107,7 @@ namespace Soleil
             builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
             builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
             builder.Services.AddScoped<IEyeScanRepository, EyeScanRepository>();
+            builder.Services.AddTransient<Soleil.Services.IEmailService, Soleil.Services.EmailService>();
             builder.Services.AddHttpClient();
 
             var app = builder.Build();
@@ -130,7 +127,7 @@ namespace Soleil
                 }
             }
 
-            // 9. Error Handler
+            // 9. ✅ Error Handler عشان نشوف المشكلة
             app.UseExceptionHandler(errorApp =>
             {
                 errorApp.Run(async context =>

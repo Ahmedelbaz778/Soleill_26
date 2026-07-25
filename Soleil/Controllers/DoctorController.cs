@@ -26,6 +26,8 @@ public class DoctorController : ControllerBase
         if (!doctors.Any())
             return NotFound(new { Message = "لا يوجد دكاترة متاحون حالياً" });
 
+        var baseUrl = "https://soleilahmeda.runasp.net";
+
         var result = doctors.Select(d => new DoctorDto
         {
             Id = d.Id,
@@ -35,7 +37,12 @@ public class DoctorController : ControllerBase
             City = d.City,
             ClinicPhone = d.ClinicPhone,
             WorkingHours = d.WorkingHours,
-            ProfileImage = d.CertificateImage
+            ProfileImage = d.ProfileImage != null
+                ? $"{baseUrl}/profiles/{d.ProfileImage}"
+                : null,
+            //CertificateImage = d.CertificateImage != null
+               // ? $"{baseUrl}/certificates/{d.CertificateImage}"
+              //  : null
         });
 
         return Ok(result);
@@ -59,7 +66,8 @@ public class DoctorController : ControllerBase
             City = doctor.City,
             ClinicPhone = doctor.ClinicPhone,
             WorkingHours = doctor.WorkingHours,
-            ProfileImage = doctor.CertificateImage
+            ProfileImage = doctor.ProfileImage,        
+            CertificateImage = doctor.CertificateImage 
         };
 
         return Ok(result);

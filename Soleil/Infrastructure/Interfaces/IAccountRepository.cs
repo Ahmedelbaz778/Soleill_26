@@ -11,7 +11,11 @@ public interface IAccountRepository
     Task AddDoctorAsync(Doctor doctor);
     Task AssignRoleAsync(ApplicationUser user, string role);
     Task<string?> GetUserRoleAsync(ApplicationUser user);
+
     Task SaveChangesAsync();
     Task<ApplicationUser?> ValidateUserAsync(LoginDto loginDto);
     string GenerateJwtToken(ApplicationUser user);
+
+    
+    Task<string> ForgotPasswordAsync(string email);
 }
